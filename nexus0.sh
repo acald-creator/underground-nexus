@@ -120,5 +120,3 @@ su - abc
 #------------------------------------
 #Default password to Desktop once in Chrome RDP is "notiaPoint1" - change the password using `sudo passwd abc`
 #Configure two factor authentication: https://www.tecmint.com/enable-two-factor-authentication-in-ubuntu/
-
-DISPLAY= /opt/google/chrome-remote-desktop/start-host --code="4/0AX4XfWjUsYBswxSiaJY5wqCZa0HwGvSJn67ujSxgLzsRfm06sXZK6QLMkOYwsovCIUkUoA" --redirect-url="https://remotedesktop.google.com/_/oauthredirect" --name=$(hostname)
