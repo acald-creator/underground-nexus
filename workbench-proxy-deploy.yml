@@ -1,7 +1,7 @@
 version: "3.6"
 services:
   workbench:
-    image: linuxserver/webtop:ubuntu-mate
+    image: linuxserver/webtop:ubuntu-kde
     ports:
       - "3000:3000"
     #shm_size: "1gb" #optional
@@ -17,8 +17,10 @@ services:
       #- SUBFOLDER=/ #optional
     networks:
       #- default
-      - inner-athena
+      #- Inner-Athena
       - traefik-public
+    dns:
+      - 10.20.0.1
     deploy:
       labels:
         - traefik.port=3000
@@ -49,7 +51,7 @@ services:
   #workbench0:
     #external: true
 networks:
-  inner-athena:
+  Inner-Athena:
     external: true
   traefik-public:
     external: true
