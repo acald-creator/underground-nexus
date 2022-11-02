@@ -17,3 +17,12 @@ docker node update --label-add traefik-public.traefik-public-certificates=true U
 docker stack deploy -c /nexus-bucket/underground-nexus/traefik-api-proxy.yml traefik
 docker stack deploy -c /nexus-bucket/underground-nexus/gitlab-proxy-deploy.yml gitlab
 docker stack deploy -c /nexus-bucket/underground-nexus/workbench-proxy-deploy.yml collaborator-workbench
+
+#Set up DNS and CNAME Records to make underground-ops.me available
+cd /var/lib/docker/volumes/pihole_config/_data/
+echo "10.20.0.1 underground-ops.me" >> custom.list
+
+cd /var/lib/docker/volumes/pihole_DNS_data/_data/
+echo "cname=api.underground-ops.me,underground-ops.me" >> 05-pihole-custom-cname.conf
+echo "cname=gitlab.underground-ops.me,underground-ops.me" >> 05-pihole-custom-cname.conf
+echo "cname=workbench.underground-ops.me,underground-ops.me" >> 05-pihole-custom-cname.conf
