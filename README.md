@@ -8,17 +8,17 @@ What is a hyperconverged data center? **-->** <a href="https://www.sdxcentral.co
 
 ***The Underground Nexus official repository lives here:*** https://github.com/Underground-Ops/underground-nexus
 
-***Check out how to get started with Underground Nexus quick-start guidance here:*** https://youtu.be/oXelz-AMwBU
+***Check out how to get started with Underground Nexus quick-start guidance here:*** https://youtu.be/lhzhLCprrYE
 
 ## Docker Desktop is recommended for developing with the Underground Nexus - Download Docker Desktop here: https://www.docker.com/products/docker-desktop
 
 ### Install Step 1 (assuming Docker is already installed) - Open a command line (Windows) or terminal (Linux or OSX) shell and paste the appropriate install command for your computer's hardware platform.
 
-**Dockerhub *DEVELOPMENT* pull for *Docker Desktop or amd64* systems:** `docker run -itd --name=Underground-Nexus -h Underground-Nexus --privileged --init -p 22:22 -p 53:53/tcp -p 53:53/udp -p 80:80 -p 443:443 -p 1000:1000 -p 2375:2375 -p 2376:2376 -p 2377:2377 -p 9010:9010 -p 9050:9443 -p 18443:18443 -v underground-nexus-docker-socket:/var/run -v underground-nexus-data:/var/lib/docker/volumes -v nexus-bucket:/nexus-bucket natoascode/underground-nexus:amd64`
+**Dockerhub *DEVELOPMENT* pull for *Docker Desktop or amd64* systems:** `docker run -itd --name=Underground-Nexus -h Underground-Nexus --privileged --init -p 22:22 -p 53:53/tcp -p 53:53/udp -p 80:80 -p 8080:8080 -p 443:443 -p 1000:1000 -p 2375:2375 -p 2376:2376 -p 2377:2377 -p 9010:9010 -p 9050:9443 -p 18443:18443 -v underground-nexus-docker-socket:/var/run -v underground-nexus-data:/var/lib/docker/volumes -v nexus-bucket:/nexus-bucket natoascode/underground-nexus:amd64`
 
 **Dockerhub *SECURE* pull for *Docker Desktop or amd64* systems:** `docker run -itd --name=Underground-Nexus -h Underground-Nexus --privileged --init -p 1000:1000 -p 9050:9443 -v underground-nexus-docker-socket:/var/run -v underground-nexus-data:/var/lib/docker/volumes -v nexus-bucket:/nexus-bucket natoascode/underground-nexus:amd64`
 
-**Dockerhub *DEVELOPMENT* pull for *Apple M1, Raspberry Pi, NVIDIA Jetson and arm64* systems:** `docker run -itd --name=Underground-Nexus -h Underground-Nexus --privileged --init -p 22:22 -p 53:53/tcp -p 53:53/udp -p 80:80 -p 443:443 -p 1000:1000 -p 2375:2375 -p 2376:2376 -p 2377:2377 -p 9010:9010 -p 9050:9443 -p 18443:18443 -v underground-nexus-docker-socket:/var/run -v underground-nexus-data:/var/lib/docker/volumes -v nexus-bucket:/nexus-bucket natoascode/underground-nexus:arm64`
+**Dockerhub *DEVELOPMENT* pull for *Apple M1, Raspberry Pi, NVIDIA Jetson and arm64* systems:** `docker run -itd --name=Underground-Nexus -h Underground-Nexus --privileged --init -p 22:22 -p 53:53/tcp -p 53:53/udp -p 80:80 -p 8080:8080 -p 443:443 -p 1000:1000 -p 2375:2375 -p 2376:2376 -p 2377:2377 -p 9010:9010 -p 9050:9443 -p 18443:18443 -v underground-nexus-docker-socket:/var/run -v underground-nexus-data:/var/lib/docker/volumes -v nexus-bucket:/nexus-bucket natoascode/underground-nexus:arm64`
 
 **Dockerhub *SECURE* pull for *Apple M1, Raspberry Pi, NVIDIA Jetson and arm64* systems:** `docker run -itd --name=Underground-Nexus -h Underground-Nexus --privileged --init -p 1000:1000 -p 9050:9443 -v underground-nexus-docker-socket:/var/run -v underground-nexus-data:/var/lib/docker/volumes -v nexus-bucket:/nexus-bucket natoascode/underground-nexus:arm64`
 
@@ -33,6 +33,10 @@ What is a hyperconverged data center? **-->** <a href="https://www.sdxcentral.co
 
 **ALTERNATIVE** - From inside of either a Docker Desktop shell to the Underground Nexus container or a Portainer shell into the Nexus, enter this command from inside the Underground Nexus container itself for activation:
 `sh deploy-olympiad.sh`
+
+**Head to Portainer to Log In at - *https://localhost:9050*:**
+- Reset Portainer for initial login if locked out using `docker exec Underground-Nexus docker restart Olympiad0`
+- Once the install script completes head to *http://localhost:1000* and open **_Firefox_** to find the **_Git-BIOS Control Panel_** to get started using the Underground Nexus resources and tools
 
 ----------------------------------------------------
 

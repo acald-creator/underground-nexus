@@ -19,6 +19,9 @@ RUN curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/s
 RUN curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/arm64/kubectl" && chmod +x ./kubectl && mv ./kubectl /usr/local/bin/kubectl; exit 0
 RUN curl https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash && helm repo add stable https://charts.helm.sh/stable && helm repo add gitlab https://charts.gitlab.io/; exit 0
 #RUN wget -O- https://apt.releases.hashicorp.com/gpg | gpg --dearmor | tee /usr/share/keyrings/hashicorp-archive-keyring.gpg && echo "deb [signed-by=/usr/share/keyrings/hashicorp-archive-keyring.gpg] https://apt.releases.hashicorp.com $(lsb_release -cs) main" | tee /etc/apt/sources.list.d/hashicorp.list && apk update && apk add terraform; exit 0
+WORKDIR "/usr/local"
+RUN curl -L https://dl.dagger.io/dagger/install.sh | sh
+WORKDIR "/"
 #-------------------------------
 
 RUN echo "#!/bin/sh" > deploy-olympiad.sh
@@ -49,6 +52,9 @@ RUN echo "docker exec workbench echo "docker exec Security-Operation-Center sudo
 #ARM64 Visual Studio Code deploy
 #RUN echo "docker exec workbench echo "docker exec workbench sudo wget https://aka.ms/linux-arm64-deb -O vscode-arm64.deb" >> /nexus-bucket/workbench.sh" >> deploy-olympiad.sh
 #RUN echo "docker exec workbench echo "docker exec workbench sudo dpkg -i vscode-arm64.deb" >> /nexus-bucket/workbench.sh" >> deploy-olympiad.sh
+#Install Git
+RUN echo "docker exec workbench echo "docker exec workbench sudo apt install -y git" >> /nexus-bucket/workbench.sh" >> deploy-olympiad.sh
+RUN echo "docker exec workbench echo "docker exec workbench sudo apt install -y iputils-ping" >> /nexus-bucket/workbench.sh" >> deploy-olympiad.sh
 #GitHub Desktop
 RUN echo "docker exec workbench echo "docker exec workbench sudo wget https://github.com/shiftkey/desktop/releases/download/release-3.1.1-linux1/GitHubDesktop-linux-3.1.1-linux1.deb" >> /nexus-bucket/workbench.sh" >> deploy-olympiad.sh
 RUN echo "docker exec workbench echo "docker exec workbench sudo dpkg -i GitHubDesktop-linux-2.9.6-linux1.deb" >> /nexus-bucket/workbench.sh" >> deploy-olympiad.sh
@@ -60,13 +66,13 @@ RUN echo "docker exec workbench echo "docker exec workbench wget https://release
 RUN echo "docker exec workbench echo "docker exec workbench sudo dpkg -i gitkraken-amd64.deb" >> /nexus-bucket/workbench.sh" >> deploy-olympiad.sh
 #Virtual Machine Engineering Suite
 RUN echo "docker exec workbench echo "docker exec workbench sudo apt install -y qemu" >> /nexus-bucket/workbench.sh" >> deploy-olympiad.sh
-RUN echo "docker exec workbench echo "docker exec workbench sudo apt install -y qemu-kvm libvirt-daemon-system libvirt-clients bridge-utils" >> /nexus-bucket/workbench.sh" >> deploy-olympiad.sh
+RUN echo "docker exec workbench echo "docker exec workbench sudo apt install -y qemu-kvm libvirt-daemon-system libvirt-clients bridge-utils qemu-system qemu-system-x86 qemu-system-arm" >> /nexus-bucket/workbench.sh" >> deploy-olympiad.sh
 RUN echo "docker exec workbench echo "docker exec workbench sudo apt install -y virt-manager" >> /nexus-bucket/workbench.sh" >> deploy-olympiad.sh
 RUN echo "docker exec workbench echo "docker exec workbench sudo apt install -y synaptic" >> /nexus-bucket/workbench.sh" >> deploy-olympiad.sh
 #Deploy KuberNexus ETCD Kubernetes Cluster from Athena0
 RUN echo "docker exec workbench echo "docker exec Athena0 wget https://raw.githubusercontent.com/rancher/k3d/main/install.sh" >> /nexus-bucket/workbench.sh" >> deploy-olympiad.sh
 RUN echo "docker exec workbench echo "docker exec Athena0 bash /install.sh" >> /nexus-bucket/workbench.sh" >> deploy-olympiad.sh
-RUN echo "docker exec workbench echo "docker exec Athena0 k3d cluster create KuberNexus -p 8080:8080@loadbalancer -p 8443:8443@loadbalancer -p 2222:22@loadbalancer -p 179:179@loadbalancer -p 2375:2376@loadbalancer -p 2378:2379@loadbalancer -p 2381:2380@loadbalancer -p 8472:8472@loadbalancer -p 8843:443@loadbalancer -p 4789:4789@loadbalancer -p 9099:9099@loadbalancer -p 9100:9100@loadbalancer -p 7443:9443@loadbalancer -p 9796:9796@loadbalancer -p 6783:6783@loadbalancer -p 10250:10250@loadbalancer -p 10254:10254@loadbalancer -p 31896:31896@loadbalancer -v /nexus-bucket:/nexus-bucket --registry-create KuberNexus-registry --kubeconfig-update-default" >> /nexus-bucket/build-kubernexus.sh" >> deploy-olympiad.sh
+RUN echo "docker exec workbench echo "docker exec Athena0 k3d cluster create KuberNexus -p 18080:8080@loadbalancer -p 8443:8443@loadbalancer -p 2222:22@loadbalancer -p 179:179@loadbalancer -p 2375:2376@loadbalancer -p 2378:2379@loadbalancer -p 2381:2380@loadbalancer -p 8472:8472@loadbalancer -p 8843:443@loadbalancer -p 4789:4789@loadbalancer -p 9099:9099@loadbalancer -p 9100:9100@loadbalancer -p 7443:9443@loadbalancer -p 9796:9796@loadbalancer -p 6783:6783@loadbalancer -p 10250:10250@loadbalancer -p 10254:10254@loadbalancer -p 31896:31896@loadbalancer -v /nexus-bucket:/nexus-bucket --registry-create KuberNexus-registry --kubeconfig-update-default" >> /nexus-bucket/build-kubernexus.sh" >> deploy-olympiad.sh
 RUN echo "docker exec workbench echo "docker exec Athena0 export KUBECONFIG=$(k3d kubeconfig write KuberNexus)" >> /nexus-bucket/build-kubernexus.sh" >> deploy-olympiad.sh
 RUN echo "docker exec workbench echo "docker exec Athena0 #cp /root/.k3d/kubeconfig-KuberNexus.yaml /nexus-bucket/" >> /nexus-bucket/build-kubernexus.sh" >> deploy-olympiad.sh; exit 0
 RUN echo "docker exec workbench echo "docker exec Athena0 #mkdir /root/.kube && cp /root/.k3d/kubeconfig-KuberNexus.yaml /root/.kube/config" >> /nexus-bucket/build-kubernexus.sh" >> deploy-olympiad.sh; exit 0
@@ -76,6 +82,7 @@ RUN echo "docker exec workbench echo "docker exec Athena0 sh /enable-weekly-upda
 #Terraform
 RUN echo "docker exec workbench echo "docker exec workbench sudo wget https://raw.githubusercontent.com/Underground-Ops/underground-nexus/main/Terraform%20Master/terraform-workbench-install.sh" >> /nexus-bucket/workbench.sh" >> deploy-olympiad.sh
 RUN echo "docker exec workbench echo "docker exec workbench sudo sh terraform-workbench-install.sh" >> /nexus-bucket/workbench.sh" >> deploy-olympiad.sh
+RUN echo "docker exec workbench echo "docker exec workbench sudo mv /terraform-workbench-install.sh /config/Desktop/nexus-bucket" >> /nexus-bucket/workbench.sh" >> deploy-olympiad.sh
 #RUN echo "docker exec workbench echo "docker exec workbench sudo mv terraform usr/local/bin" >> /nexus-bucket/workbench.sh" >> deploy-olympiad.sh
 #RUN echo "docker exec workbench echo "docker exec workbench sudo touch ~/.bashrc" >> /nexus-bucket/workbench.sh" >> deploy-olympiad.sh
 #RUN echo "docker exec workbench echo "docker exec workbench sudo terraform -install-autocomplete" >> /nexus-bucket/workbench.sh" >> deploy-olympiad.sh
@@ -101,8 +108,9 @@ RUN echo "docker exec workbench echo "docker exec workbench sudo wget https://ra
 RUN echo "docker run -itd --name=Security-Operation-Center -h Security-Operation-Center --privileged -e PUID=2000 -e PGID=2000 -e TZ=America/Colorado -p 2000:3000 --dns=10.20.0.20 --net=Inner-Athena --ip=10.20.0.30 --restart=always -v security-operation-center:/config -v /nexus-bucket:/config/Desktop/nexus-bucket linuxserver/webtop:alpine-kde" >> deploy-olympiad.sh
 
 #Build Athena0 stack
-RUN echo "docker run -itd --init -p 22:22 --name=Athena0 -h Athena0 --dns=10.20.0.20 --net=Inner-Athena --restart=always -v athena0:/home/ -v /nexus-bucket:/nexus-bucket -v /etc/docker:/etc/docker -v /usr/local/bin/docker:/usr/local/bin/docker -v /var/run/docker.sock:/var/run/docker.sock natoascode/athena0:latest" >> deploy-olympiad.sh
+RUN echo "docker run -itd --init -p 22:22 --name=Athena0 -h Athena0 --dns=10.20.0.20 --net=Inner-Athena --restart=always -v athena0:/home/ -v /nexus-bucket:/nexus-bucket -v /etc/docker:/etc/docker -v /usr/local/bin/docker:/usr/local/bin/docker -v /var/run/docker.sock:/var/run/docker.sock -v /var/lib/docker/volumes/:/var/lib/docker/volumes/ natoascode/athena0:latest" >> deploy-olympiad.sh
 RUN echo "docker exec Athena0 apt -y update" >> deploy-olympiad.sh
+RUN echo "docker exec Athena0 apt install -y iputils-ping" >> deploy-olympiad.sh
 RUN echo "docker exec Athena0 git clone https://github.com/radareorg/radare2" >> deploy-olympiad.sh
 RUN echo "docker exec Athena0 sh radare2/sys/install.sh" >> deploy-olympiad.sh
 RUN echo "docker exec Athena0 apt-get install -y metasploit-framework" >> deploy-olympiad.sh
@@ -147,6 +155,10 @@ RUN echo "curl https://raw.githubusercontent.com/Underground-Ops/underground-nex
 #Configure firefox browser defaults
 RUN echo "wget https://raw.githubusercontent.com/Underground-Ops/underground-nexus/main/Production%20Artifacts/firefox-homepage.sh" >> deploy-olympiad.sh
 RUN echo "sh firefox-homepage.sh" >> deploy-olympiad.sh
+
+RUN echo "docker exec workbench bash /config/Desktop/nexus-bucket/terraform-workbench-install.sh && docker exec workbench terraform -v" >> deploy-olympiad.sh
+
+RUN echo "docker exec Athena0 curl https://raw.githubusercontent.com/Underground-Ops/underground-nexus/main/underground-nexus-update.sh | bash" >> deploy-olympiad.sh
 
 RUN echo "docker restart Inner-DNS-Control" >> deploy-olympiad.sh
 
