@@ -31,6 +31,11 @@ unzip _data.zip
 rm -r /var/lib/docker/volumes/underground-wordpress_db_data/_data.zip
 docker stack deploy -c /nexus-bucket/underground-nexus/wordpress-proxy-deploy.yml underground-wordpress
 
+#Build the Cloud Knowledge Base Stack
+cd /nexus-bucket/underground-nexus/'Cloud Knowledge Base Stack'/
+docker stack deploy -c ./knowledge-base-proxy-deploy.yml underground-knowledge
+docker stack deploy -c ./nextcloud-proxy-deploy.yml underground-cloud
+
 #Build the Underground Observability Stack
 cd /nexus-bucket/underground-nexus/'Observability Stack'/
 docker stack deploy -c ./docker-stack.yml underground-observability
@@ -52,6 +57,8 @@ echo "cname=alertmanager.underground-ops.me,underground-ops.me" >> 05-pihole-cus
 echo "cname=indexer.underground-ops.me,underground-ops.me" >> 05-pihole-custom-cname.conf
 echo "cname=prometheus.underground-ops.me,underground-ops.me" >> 05-pihole-custom-cname.conf
 echo "cname=wazuh.underground-ops.me,underground-ops.me" >> 05-pihole-custom-cname.conf
+echo "cname=knowledge.underground-ops.me,underground-ops.me" >> 05-pihole-custom-cname.conf
+echo "cname=cloud.underground-ops.me,underground-ops.me" >> 05-pihole-custom-cname.conf
 
 sort 05-pihole-custom-cname.conf | uniq > NEW05-pihole-custom-cname.conf
 rm 05-pihole-custom-cname.conf
@@ -74,3 +81,7 @@ docker cp wazuh-agent.sh workbench:/
 docker exec -it workbench bash
 bash /wazuh-agent.sh
 exit
+
+#Update the Cloud Knowledge Base Stack
+#docker service update underground-knowledge_db
+#docker service update underground-knowledge_app
