@@ -33,7 +33,7 @@ docker exec workbench echo docker exec workbench sudo apt install -y virt-manage
 docker exec workbench echo docker exec workbench sudo apt install -y synaptic >> /nexus-bucket/workbench.sh
 docker exec workbench echo docker exec Athena0 wget https://raw.githubusercontent.com/rancher/k3d/main/install.sh >> /nexus-bucket/workbench.sh
 docker exec workbench echo docker exec Athena0 bash /install.sh >> /nexus-bucket/workbench.sh
-docker exec workbench echo docker exec Athena0 k3d cluster create KuberNexus -p 18080:8080@loadbalancer -p 8443:8443@loadbalancer -p 2222:22@loadbalancer -p 179:179@loadbalancer -p 2375:2376@loadbalancer -p 2378:2379@loadbalancer -p 2381:2380@loadbalancer -p 8472:8472@loadbalancer -p 8843:443@loadbalancer -p 4789:4789@loadbalancer -p 9099:9099@loadbalancer -p 9100:9100@loadbalancer -p 7443:9443@loadbalancer -p 9796:9796@loadbalancer -p 6783:6783@loadbalancer -p 10250:10250@loadbalancer -p 10254:10254@loadbalancer -p 31896:31896@loadbalancer -v /nexus-bucket:/nexus-bucket --registry-create KuberNexus-registry --kubeconfig-update-default >> /nexus-bucket/build-kubernexus.sh
+docker exec workbench echo docker exec Athena0 k3d cluster create KuberNexus -p 18080:8080@loadbalancer -p 8443:8443@loadbalancer -p 2222:22@loadbalancer -p 179:179@loadbalancer -p 2375:2376@loadbalancer -p 2378:2379@loadbalancer -p 2381:2380@loadbalancer -p 8472:8472@loadbalancer -p 8843:443@loadbalancer -p 4789:4789@loadbalancer -p 9099:9099@loadbalancer -p 9100:9100@loadbalancer -p 7443:9443@loadbalancer -p 9796:9796@loadbalancer -p 6783:6783@loadbalancer -p 10250:10250@loadbalancer -p 10254:10254@loadbalancer -p 31896:31896@loadbalancer -v /nexus-bucket:/nexus-bucket --servers 3 --registry-create KuberNexus-registry --kubeconfig-update-default >> /nexus-bucket/build-kubernexus.sh
 docker exec workbench echo docker exec Athena0 export KUBECONFIG= >> /nexus-bucket/build-kubernexus.sh
 docker exec workbench echo docker exec Athena0 sh /nexus-bucket/build-kubernexus.sh >> /nexus-bucket/workbench.sh
 docker exec workbench echo docker exec Athena0 sh /enable-weekly-updates.sh >> /nexus-bucket/enable-weekly-updates.sh
@@ -55,16 +55,17 @@ docker exec Athena0 apt -y update
 docker exec Athena0 apt -y upgrade
 docker run -itd --privileged -p 9000:9000 -p 9010:9001 --name=torpedo -h torpedo --dns=10.20.0.20 --net=Inner-Athena --restart=always -v /nexus-bucket:/nexus-bucket -v /nexus-bucket/s3-torpedo:/data quay.io/minio/minio server /data --console-address :9001
 docker run -d --name=code-server -e PUID=1050 -e PGID=1050 -p 18443:3000 --dns=10.20.0.20 --net=Inner-Athena -v /nexus-bucket:/nexus-bucket -v /nexus-bucket/visual-studio-code:/config -v /etc/docker:/etc/docker -v /usr/local/bin/docker:/usr/local/bin/docker -v /var/run/docker.sock:/var/run/docker.sock --restart unless-stopped lscr.io/linuxserver/openvscode-server
-docker run -itd -p 8200:1234 --name=Nexus-Secret-Vault -h Nexus-Secret-Vault --dns=10.20.0.20 --net=Inner-Athena --restart=always --cap-add=IPC_LOCK -e 'VAULT_DEV_ROOT_TOKEN_ID=myroot' -e 'VAULT_DEV_LISTEN_ADDRESS=0.0.0.0:1234' vault
+docker run -itd -p 8200:1234 --name=Nexus-Secret-Vault -h Nexus-Secret-Vault --dns=10.20.0.20 --net=Inner-Athena --restart=always --cap-add=IPC_LOCK -e 'VAULT_DEV_ROOT_TOKEN_ID=myroot' -e 'VAULT_DEV_LISTEN_ADDRESS=0.0.0.0:1234' vault:1.13.3
 docker exec Athena0 sh /old-underground-nexus-dagger-ci.sh
 docker exec Athena0 sh /nexus-bucket/underground-nexus/'Dagger CI'/Scripts/enable-weekly-updates.sh
 docker exec workbench echo docker exec workbench bash /config/Desktop/nexus-bucket/underground-nexus/visual-studio-code.sh >> /nexus-bucket/workbench.sh
 docker exec Athena0 sh /nexus-bucket/workbench.sh
 curl -s https://raw.githubusercontent.com/rancher/k3d/main/install.sh | bash
-k3d cluster create KuberNexus -p 8080:8080@loadbalancer -p 8443:8443@loadbalancer -p 2222:22@loadbalancer -p 179:179@loadbalancer -p 2375:2376@loadbalancer -p 2378:2379@loadbalancer -p 2381:2380@loadbalancer -p 8472:8472@loadbalancer -p 8843:443@loadbalancer -p 4789:4789@loadbalancer -p 9099:9099@loadbalancer -p 9100:9100@loadbalancer -p 7443:9443@loadbalancer -p 9796:9796@loadbalancer -p 6783:6783@loadbalancer -p 10250:10250@loadbalancer -p 10254:10254@loadbalancer -p 31896:31896@loadbalancer -v /nexus-bucket:/nexus-bucket --registry-create KuberNexus-registry --kubeconfig-update-default
+k3d cluster create KuberNexus -p 8080:8080@loadbalancer -p 8443:8443@loadbalancer -p 2222:22@loadbalancer -p 179:179@loadbalancer -p 2375:2376@loadbalancer -p 2378:2379@loadbalancer -p 2381:2380@loadbalancer -p 8472:8472@loadbalancer -p 8843:443@loadbalancer -p 4789:4789@loadbalancer -p 9099:9099@loadbalancer -p 9100:9100@loadbalancer -p 7443:9443@loadbalancer -p 9796:9796@loadbalancer -p 6783:6783@loadbalancer -p 10250:10250@loadbalancer -p 10254:10254@loadbalancer -p 31896:31896@loadbalancer -v /nexus-bucket:/nexus-bucket --servers 3 --registry-create KuberNexus-registry --kubeconfig-update-default
 curl -LO https://dl.k8s.io/release/v1.26.0/bin/linux/amd64/kubectl && chmod +x ./kubectl && mv ./kubectl /usr/local/bin/kubectl
 #curl -LO https://dl.k8s.io/release/v1.26.0/bin/linux/arm64/kubectl && chmod +x ./kubectl && mv ./kubectl /usr/local/bin/kubectl
 k3d kubeconfig merge KuberNexus --kubeconfig-merge-default
+docker network create -d overlay --subnet=172.16.32.0/24 underground-wordpress_internal
 wget https://raw.githubusercontent.com/Underground-Ops/underground-nexus/main/Dagger%20CI/Scripts/gitlab-collaborator-stack.sh
 sh gitlab-collaborator-stack.sh
 wget https://raw.githubusercontent.com/Underground-Ops/underground-nexus/main/Production%20Artifacts/firefox-homepage.sh

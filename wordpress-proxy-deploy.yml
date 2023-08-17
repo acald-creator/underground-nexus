@@ -11,6 +11,8 @@ services:
      #container_name: mariadb
      volumes:
        - db_data:/config
+     #ports:
+       #- 3306:3306
      restart: always
      environment:
        MYSQL_ROOT_PASSWORD: Augustu53CannotFly148235
@@ -18,9 +20,7 @@ services:
        MYSQL_USER: wordpressuser
        MYSQL_PASSWORD: Augustu5CanFly1482
      networks:
-      #- default
-      #- Inner-Athena
-      - traefik-public
+      - underground-wordpress_internal
      dns:
       - 10.20.0.1
      expose:
@@ -42,8 +42,7 @@ services:
        WORDPRESS_DB_NAME: wordpressdb
 
      networks:
-      #- default
-      #- Inner-Athena
+      - underground-wordpress_internal
       - traefik-public
      dns:
       - 10.20.0.1
@@ -83,4 +82,6 @@ networks:
   Inner-Athena:
     external: true
   traefik-public:
+    external: true
+  underground-wordpress_internal:
     external: true

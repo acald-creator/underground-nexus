@@ -10,6 +10,8 @@ services:
            memory: 2048M
      volumes:
        - db_data:/config
+     #ports:
+       #- 3305:3306
      environment:
       MYSQL_ROOT_PASSWORD: Augustu53CannotFly14823599
       MYSQL_DATABASE: bookstack
@@ -17,7 +19,7 @@ services:
       MYSQL_PASSWORD: Apoll0HasSh03s148299
      networks:
       - internal
-      - traefik-public
+      #- traefik-public
      dns:
       - 10.20.0.1
 
