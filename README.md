@@ -50,13 +50,17 @@ Learn why platform engineering matters to DevSecOps: https://youtu.be/ghzsBm8vOm
 
 ### Docker Desktop is recommended for developing with the Underground Nexus - Download Docker Desktop here: https://www.docker.com/products/docker-desktop
 
+## *Underground Nexus is natively powered by GitLab and Open Ziti*
+- Learn more about GitLab: https://about.gitlab.com/
+- Learn more about Open Ziti: https://openziti.io/
+
 ## Install Step 1 (assuming Docker is already installed) - Open a command line (Windows) or terminal (Linux or OSX) shell and paste the appropriate install command for your computer's hardware platform.
 
-**Dockerhub *DEVELOPMENT* pull for *Docker Desktop or amd64* systems:** `docker run -itd --name=Underground-Nexus -h Underground-Nexus --privileged --init -p 22:22 -p 53:53/tcp -p 53:53/udp -p 80:80 -p 8080:8080 -p 443:443 -p 1000:1000 -p 2375:2375 -p 2376:2376 -p 2377:2377 -p 9010:9010 -p 9050:9443 -p 18443:18443 -v underground-nexus-docker-socket:/var/run -v underground-nexus-data:/var/lib/docker/volumes -v nexus-bucket:/nexus-bucket natoascode/underground-nexus:amd64`
+**Dockerhub *DEVELOPMENT* pull for *Docker Desktop or amd64* systems:** `docker run -itd --name=Underground-Nexus -h Underground-Nexus --privileged --init -p 22:22 -p 80:80 -p 8080:8080 -p 443:443 -p 1000:1000 -p 2375:2375 -p 2376:2376 -p 2377:2377 -p 9010:9010 -p 9050:9443 -p 18443:18443 -v underground-nexus-docker-socket:/var/run -v underground-nexus-data:/var/lib/docker/volumes -v nexus-bucket:/nexus-bucket natoascode/underground-nexus:amd64`
 
 **Dockerhub *SECURE* pull for *Docker Desktop or amd64* systems:** `docker run -itd --name=Underground-Nexus -h Underground-Nexus --privileged --init -p 1000:1000 -p 9050:9443 -v underground-nexus-docker-socket:/var/run -v underground-nexus-data:/var/lib/docker/volumes -v nexus-bucket:/nexus-bucket natoascode/underground-nexus:amd64`
 
-**Dockerhub *DEVELOPMENT* pull for *Apple M1, Raspberry Pi, NVIDIA Jetson and arm64* systems:** `docker run -itd --name=Underground-Nexus -h Underground-Nexus --privileged --init -p 22:22 -p 53:53/tcp -p 53:53/udp -p 80:80 -p 8080:8080 -p 443:443 -p 1000:1000 -p 2375:2375 -p 2376:2376 -p 2377:2377 -p 9010:9010 -p 9050:9443 -p 18443:18443 -v underground-nexus-docker-socket:/var/run -v underground-nexus-data:/var/lib/docker/volumes -v nexus-bucket:/nexus-bucket natoascode/underground-nexus:arm64`
+**Dockerhub *DEVELOPMENT* pull for *Apple M1, Raspberry Pi, NVIDIA Jetson and arm64* systems:** `docker run -itd --name=Underground-Nexus -h Underground-Nexus --privileged --init -p 22:22 -p 80:80 -p 8080:8080 -p 443:443 -p 1000:1000 -p 2375:2375 -p 2376:2376 -p 2377:2377 -p 9010:9010 -p 9050:9443 -p 18443:18443 -v underground-nexus-docker-socket:/var/run -v underground-nexus-data:/var/lib/docker/volumes -v nexus-bucket:/nexus-bucket natoascode/underground-nexus:arm64`
 
 **Dockerhub *SECURE* pull for *Apple M1, Raspberry Pi, NVIDIA Jetson and arm64* systems:** `docker run -itd --name=Underground-Nexus -h Underground-Nexus --privileged --init -p 1000:1000 -p 9050:9443 -v underground-nexus-docker-socket:/var/run -v underground-nexus-data:/var/lib/docker/volumes -v nexus-bucket:/nexus-bucket natoascode/underground-nexus:arm64`
 
@@ -69,10 +73,10 @@ Learn why platform engineering matters to DevSecOps: https://youtu.be/ghzsBm8vOm
 ***ACTIVATE the Underground Nexus (this is the only necessary command to run IMMEDIATELY after deploying the Underground Nexus to activate it):***
 **`docker exec Underground-Nexus bash deploy-olympiad.sh`**
 
-**ALTERNATIVE ACTIVATION** - From inside of either a Docker Desktop shell to the Underground Nexus container or a Portainer shell into the Nexus, enter this command from inside the Underground Nexus container itself for activation:
+**ALTERNATIVE ACTIVATION** - _From inside of either a Docker Desktop shell to the Underground Nexus container or a Portainer shell into the Nexus_, enter this command from inside the Underground Nexus container itself for activation:
 `bash deploy-olympiad.sh`
 
-**ALTERNATIVE FOR LOW POWERED DEVICES AND "LIGHTWEIGHT" DEPLOYMENT ACTIVATIONS** - *Systems with **under 8GB worth of RAM** will perform best using the light deployment of the Underground Nexus that that lacks KuberNexus, the underground-ops.me domain and non-essential tools. (apps remoed include Vault, the SOC, Traefik, Wordpress, GitLab, collaborator workbenches, k3d/Kubernetes)* -- From inside of either a Docker Desktop shell to the Underground Nexus container or a Portainer shell into the Nexus, enter this command from inside the Underground Nexus container itself for activation:
+**ALTERNATIVE FOR LOW POWERED DEVICES AND "LIGHTWEIGHT" DEPLOYMENT ACTIVATIONS** - *Systems with **under 8GB worth of RAM** will perform best using the light deployment of the Underground Nexus that that lacks KuberNexus, the underground-ops.me domain and non-essential tools. (apps remoed include Vault, the SOC, Traefik, Wordpress, GitLab, collaborator workbenches, k3d/Kubernetes)* -- _From inside of either a Docker Desktop shell to the Underground Nexus container or a Portainer shell into the Nexus_, enter this command from inside the Underground Nexus container itself for activation:
 `bash olympiad-deploy-light.sh`
 
 **Head to Portainer to Log In at - *https://localhost:9050*:**
