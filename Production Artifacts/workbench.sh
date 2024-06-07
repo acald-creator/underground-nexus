@@ -19,6 +19,7 @@ sudo apt install -y qemu
 sudo apt install -y qemu-kvm libvirt-daemon-system libvirt-clients bridge-utils qemu-system qemu-system-x86 qemu-system-arm
 sudo apt install -y virt-manager
 sudo apt install -y synaptic
+sudo apt install -y terminator
 #docker exec Athena0 wget https://raw.githubusercontent.com/rancher/k3d/main/install.sh
 #docker exec Athena0 bash /install.sh
 #docker exec Athena0 sh /nexus-bucket/build-kubernexus.sh
@@ -30,7 +31,7 @@ sudo apt --fix-broken install -y
 sudo apt -y upgrade
 sudo apt install -y virt-manager
 sudo rm /usr/share/backgrounds/ubuntu-mate-jammy/Jammy-Jellyfish_WP_4096x2304_Green.png
-sudo wget https://raw.githubusercontent.com/Underground-Ops/underground-nexus/main/Wallpapers/underground-nexus-scifi-space-jelly.png -O /usr/share/backgrounds/ubuntu-mate-jammy/Jammy-Jellyfish_WP_4096x2304_Green.png
+sudo wget https://raw.githubusercontent.com/Underground-Ops/underground-nexus/main/Wallpapers/underground-nexus-scifi-space-jelly.png -O /usr/share/backgrounds/ubuntu-mate-common/Green-Wall-Logo.png
 bash /config/Desktop/nexus-bucket/underground-nexus/visual-studio-code.sh
 #Deploy EDR agent to admin workbench
 echo "curl -so wazuh-agent-4.3.10.deb https://packages.wazuh.com/4.x/apt/pool/main/w/wazuh-agent/wazuh-agent_4.3.10-1_amd64.deb && sudo WAZUH_MANAGER='wazuh.manager' WAZUH_AGENT_GROUP='default' dpkg -i ./wazuh-agent-4.3.10.deb && update-rc.d wazuh-agent defaults 95 10 && service wazuh-agent start" > wazuh-agent.sh
