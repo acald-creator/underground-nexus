@@ -17,6 +17,9 @@ apt install -y wget
 wget https://dl.google.com/linux/direct/chrome-remote-desktop_current_amd64.deb
 sudo dpkg -i chrome-remote-desktop_current_amd64.deb
 apt install -y -f
+#download optional github dekstop script
+wget https://raw.githubusercontent.com/Underground-Ops/underground-nexus/main/github-desktop.sh
+#bash github-desktop.sh
 apt update
 wget https://release.gitkraken.com/linux/gitkraken-amd64.deb
 sudo dpkg -i gitkraken-amd64.deb
@@ -80,6 +83,9 @@ echo "abc:notiaPoint1" | chpasswd
 #sudo wget https://github.com/Underground-Ops/underground-nexus/raw/main/Production%20Artifacts/firefox.zip
 #sudo unzip firefox.zip
 #sudo chmod -R a+rwx firefox
+
+#add nexus-creator-vault-control-panel site
+sudo wget -O /nexus-creator-vault-control-panel.html https://raw.githubusercontent.com/Underground-Ops/underground-nexus/main/Production%20Artifacts/Wordpress/nexus-creator-vault/nexus-creator-vault-control-panel.html
 
 su - abc
 #------------------------------------
