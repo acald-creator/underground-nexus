@@ -26,6 +26,8 @@
 
 ## INTRODUCTION
 
+__Here is the best way to install the complete Underground Nexus pipeline with a built in virtual machine engine (best for general use and for orchestrating containers and virtual machines together):__ https://github.com/Underground-Ops/underground-nexus/tree/cerberus0
+
 <img src="https://github.com/Underground-Ops/underground-nexus/blob/cdcb0a3ee862c8c4f029fed6c45fe280786d4173/Graphics/SVG/nexus-software-factory.svg" alt="Underground Nexus Software Factory">
 
 Underground Nexus is a foundation for building autonomous cloud native companies.
