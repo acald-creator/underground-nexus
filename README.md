@@ -1,6 +1,8 @@
 # Underground Nexus - Copy/Paste Data Center and DevSecOps Software Factory
 
-**Release Version 1.0.1**
+## Learn to master cloud skills with Underground Nexus. Check out Cloud Jam: https://cloudunderground.dev/products/cloud-jam
+
+**Release Version 2.0.1**
 
 <p align="center"><img src="https://github.com/Underground-Ops/underground-nexus/blob/main/Graphics/SVG/cloud-underground-logo.svg" alt="Cloud Underground Logo" width="300px" height="300px"> <img src="https://github.com/Underground-Ops/underground-nexus/blob/main/Graphics/SVG/new-nexus-logo.svg" alt="Underground Nexus Logo" width="300px" height="300px"></p>
 
@@ -215,3 +217,7 @@ Grow your glory!
 **Ditch VPN's and go 100% Zero Trust:** https://www.youtube.com/watch?v=IYmXPF3XUwo
 
 **Publish a Zero Trust Wordpress Website directly from Underground Nexus with Cloudflare:** https://youtu.be/ey4u7OUAF3c
+
+----------------------------------------------------
+
+## Learn to master cloud skills with Underground Nexus. Check out Cloud Jam: https://cloudunderground.dev/products/cloud-jam
