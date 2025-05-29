@@ -111,13 +111,13 @@ Learn why platform engineering matters to DevSecOps: https://youtu.be/ghzsBm8vOm
 
 **7.** The Athena0 Kali node happens to be a primary monitoring point for Grafana and Loki and also includes Radare2 (forensics tool used by NSA) for deep analysis that can be monitored with Grafana dashboards.
 
-**8.** Nexus can be turned into an ultra Pi hole if its DNS server ports are opened when Nexus is deployed (ports 53 and 67).  This would allow the Underground Nexus to be used as a company or home SOC that can have data integrated with Pi hole data using Grafana and Loki).
+**8.** Nexus can be turned into an ultra Pi hole if its DNS server ports are opened when Nexus is deployed (ports 53 and 67).  This would allow the Underground Nexus to be used as a company or home SOC that can have data integrated with Pi hole data using Grafana and Loki.
 
 **9.** Default URLs will show up if Nexus deploys without errors - **the links below can be used from inside the Nexus desktop if accessing this GitHub URL from inside the Firefox browser within the Nexus MATE desktop itself** (these will ONLY exist from inside a webtop web browser - Firefox works with these addresses from within the Nexus desktops):
 - Portainer: https://10.20.0.1:9443
 - Pi hole: http://inner-dns-control/admin/login.php (can change password from within Portainer)
 - Grafana: https://grafana.underground-ops.me/ and http://10.20.0.1:3000/ (default `user`:`password` is `admin`:`notiaPoint1`)
-- Wazuh: https://wazuh.underground-ops.me:5601/ and https://10.20.0.1:5601/ (default `user`:`password` is `admin`:`SecretPassword`)
+- Wazuh: https://wazuh.underground-ops.me:5601/ and https://10.20.0.1:5601/ (default `user`:`password` is `admin`:`admin`)
 - Cyber Life Torpedo (S3 bucket): http://10.20.0.1:9010 (default `user`:`password` is `minioadmin`:`minioadmin`)
 - Ubuntu MATE Admin Desktop: `http://10.20.0.1:1000` (runs as root - default `user`:`password` is `abc`:`abc` - don't access this host from inside the Underground Nexus MATE Desktop)
 - Ubuntu KDE Security Operation Center Desktop: http://10.20.0.1:2000 (least privilege - default `user`:`password` is `abc`:`abc`)
