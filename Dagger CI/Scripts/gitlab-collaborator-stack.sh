@@ -41,7 +41,17 @@ docker stack deploy -c ./nextcloud-proxy-deploy.yml underground-cloud
 cd /nexus-bucket/underground-nexus/'Observability Stack'/
 docker stack deploy -c ./docker-stack.yml underground-observability
 
+#-------------------------------------------------------------------------
+# CRITICAL PIHOLE CONFIGURATIONS - NOTHING WORKS WITHOUT THIS
 #Set up DNS and CNAME Records to make underground-ops.me available
+cd /
+cp /nexus-bucket/underground-nexus/'Production Artifacts'/Inner-DNS-Control_teleporter.zip /var/lib/docker/volumes/pihole_DNS_data/_data/Inner-DNS-Control_teleporter.zip
+docker exec Inner-DNS-Control cp /etc/dnsmasq.d/Inner-DNS-Control_teleporter.zip /Inner-DNS-Control_teleporter.zip
+cp /nexus-bucket/underground-nexus/'Production Artifacts'/pihole.toml /var/lib/docker/volumes/pihole_DNS_data/_data/pihole.toml
+docker exec Inner-DNS-Control cp /etc/dnsmasq.d/pihole.toml /etc/pihole/pihole.toml
+# add a restore command once ready to use from inside the pihole itself, or deploy a script from the nexus bucket to work wtih /Inner-DNS-Control_teleporter.zip from inside Inner-DNS-Control
+# Check for Pi hole backup file with this command: docker exec Inner-DNS-Control ls /
+
 cd /var/lib/docker/volumes/pihole_config/_data/
 echo "10.20.0.1 underground-ops.me" >> custom.list
 
@@ -65,11 +75,16 @@ sort 05-pihole-custom-cname.conf | uniq > NEW05-pihole-custom-cname.conf
 rm 05-pihole-custom-cname.conf
 mv NEW05-pihole-custom-cname.conf 05-pihole-custom-cname.conf
 
+#-------------------------------------------------------------------------
+
 #Build SIEM and EDR Wazuh stack
 cd /
 rm -r /wazuh-docker
 cp -r /nexus-bucket/underground-nexus/'Observability Stack'/wazuh-docker /
 cd /wazuh-docker/single-node/
+chmod 644 ./config/wazuh_indexer_ssl_certs/*.pem
+chmod 644 ./config/wazuh_indexer_ssl_certs/*.key
+#cp generate-certs.yml generate-indexer-certs.yml || true
 apt install -y docker-compose
 apk add docker-cli-compose
 apk add docker-compose
@@ -79,11 +94,11 @@ echo "docker-compose -f generate-indexer-certs.yml run --rm generator && docker-
 bash build-wazuh.sh
 
 #Deploy EDR agent to admin workbench
-echo "curl -so wazuh-agent-4.3.10.deb https://packages.wazuh.com/4.x/apt/pool/main/w/wazuh-agent/wazuh-agent_4.3.10-1_amd64.deb && sudo WAZUH_MANAGER='wazuh.manager' WAZUH_AGENT_GROUP='default' dpkg -i ./wazuh-agent-4.3.10.deb && update-rc.d wazuh-agent defaults 95 10 && service wazuh-agent start" > wazuh-agent.sh
-docker cp wazuh-agent.sh workbench:/
-docker exec -it workbench bash
-bash /wazuh-agent.sh
-exit
+#echo "curl -so wazuh-agent-4.3.10.deb https://packages.wazuh.com/4.x/apt/pool/main/w/wazuh-agent/wazuh-agent_4.3.10-1_amd64.deb && sudo WAZUH_MANAGER='wazuh.manager' WAZUH_AGENT_GROUP='default' dpkg -i ./wazuh-agent-4.3.10.deb && update-rc.d wazuh-agent defaults 95 10 && service wazuh-agent start" > wazuh-agent.sh
+#docker cp wazuh-agent.sh workbench:/
+#docker exec -it workbench bash
+#bash /wazuh-agent.sh
+#exit
 
 #Update the Cloud Knowledge Base Stack
 #docker service update underground-knowledge_db

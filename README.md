@@ -1,6 +1,8 @@
 # Underground Nexus - Copy/Paste Data Center and DevSecOps Software Factory
 
-**Release Version 1.0.1**
+## Learn to master cloud skills with Underground Nexus. Check out Cloud Jam: https://cloudunderground.dev/products/cloud-jam
+
+**Release Version 2.0.1**
 
 <p align="center"><img src="https://github.com/Underground-Ops/underground-nexus/blob/main/Graphics/SVG/cloud-underground-logo.svg" alt="Cloud Underground Logo" width="300px" height="300px"> <img src="https://github.com/Underground-Ops/underground-nexus/blob/main/Graphics/SVG/new-nexus-logo.svg" alt="Underground Nexus Logo" width="300px" height="300px"></p>
 
@@ -25,6 +27,8 @@
 ----------------------------------------------------
 
 ## INTRODUCTION
+
+__Here is the best way to install the complete Underground Nexus pipeline with a built in virtual machine engine (best for general use and for orchestrating containers and virtual machines together):__ https://github.com/Underground-Ops/underground-nexus/tree/cerberus0
 
 <img src="https://github.com/Underground-Ops/underground-nexus/blob/cdcb0a3ee862c8c4f029fed6c45fe280786d4173/Graphics/SVG/nexus-software-factory.svg" alt="Underground Nexus Software Factory">
 
@@ -54,21 +58,23 @@ Learn why platform engineering matters to DevSecOps: https://youtu.be/ghzsBm8vOm
 - Learn more about GitLab: https://about.gitlab.com/
 - Learn more about Open Ziti: https://openziti.io/
 
-## Install Step 1 (assuming Docker is already installed) - Open a command line (Windows) or terminal (Linux or OSX) shell and paste the appropriate install command for your computer's hardware platform.
+## [RECOMMENDED] __USE THE UNDERGROUND NEXUS INSTALLER AND PACKAGE MANAGER FOR THE BEST INSTALL EXPERIENCE AT (Cerberus0 Manager CLI): https://github.com/Underground-Ops/underground-nexus/tree/cerberus0__
 
-**Dockerhub *DEVELOPMENT* pull for *Docker Desktop or amd64* systems:** `docker run -itd --name=Underground-Nexus -h Underground-Nexus --privileged --init -p 22:22 -p 80:80 -p 8080:8080 -p 443:443 -p 1000:1000 -p 2375:2375 -p 2376:2376 -p 2377:2377 -p 9010:9010 -p 9050:9443 -p 18443:18443 -v underground-nexus-docker-socket:/var/run -v underground-nexus-data:/var/lib/docker/volumes -v nexus-bucket:/nexus-bucket natoascode/underground-nexus:amd64`
+## Manual Install Step 1 (assuming Docker is already installed) - Open a command line (Windows) or terminal (Linux or OSX) shell and paste the appropriate install command for your computer's hardware platform.
 
-**Dockerhub *SECURE* pull for *Docker Desktop or amd64* systems:** `docker run -itd --name=Underground-Nexus -h Underground-Nexus --privileged --init -p 1000:1000 -p 9050:9443 -v underground-nexus-docker-socket:/var/run -v underground-nexus-data:/var/lib/docker/volumes -v nexus-bucket:/nexus-bucket natoascode/underground-nexus:amd64`
+**Dockerhub *DEVELOPMENT* pull for *Docker Desktop or amd64* systems:** `docker run -itd --name=Underground-Nexus -h Underground-Nexus --privileged --init -p 22:22 -p 80:80 -p 8080:8080 -p 443:443 -p 1000:1000 -p 2375:2375 -p 2376:2376 -p 2377:2377 -p 9010:9010 -p 9050:9443 -p 18080:8080 -p 18443:18443 -v /dev:/dev -v underground-nexus-docker-socket:/var/run -v underground-nexus-data:/var/lib/docker/volumes -v nexus-bucket:/nexus-bucket natoascode/underground-nexus:amd64`
 
-**Dockerhub *DEVELOPMENT* pull for *Apple M1, Raspberry Pi, NVIDIA Jetson and arm64* systems:** `docker run -itd --name=Underground-Nexus -h Underground-Nexus --privileged --init -p 22:22 -p 80:80 -p 8080:8080 -p 443:443 -p 1000:1000 -p 2375:2375 -p 2376:2376 -p 2377:2377 -p 9010:9010 -p 9050:9443 -p 18443:18443 -v underground-nexus-docker-socket:/var/run -v underground-nexus-data:/var/lib/docker/volumes -v nexus-bucket:/nexus-bucket natoascode/underground-nexus:arm64`
+**Dockerhub *SECURE* pull for *Docker Desktop or amd64* systems:** `docker run -itd --name=Underground-Nexus -h Underground-Nexus --privileged --init -p 1000:1000 -p 9050:9443 -v /dev:/dev -v underground-nexus-docker-socket:/var/run -v underground-nexus-data:/var/lib/docker/volumes -v nexus-bucket:/nexus-bucket natoascode/underground-nexus:amd64`
 
-**Dockerhub *SECURE* pull for *Apple M1, Raspberry Pi, NVIDIA Jetson and arm64* systems:** `docker run -itd --name=Underground-Nexus -h Underground-Nexus --privileged --init -p 1000:1000 -p 9050:9443 -v underground-nexus-docker-socket:/var/run -v underground-nexus-data:/var/lib/docker/volumes -v nexus-bucket:/nexus-bucket natoascode/underground-nexus:arm64`
+**Dockerhub *DEVELOPMENT* pull for *Apple M1, Raspberry Pi, NVIDIA Jetson and arm64* systems:** `docker run -itd --name=Underground-Nexus -h Underground-Nexus --privileged --init -p 22:22 -p 80:80 -p 8080:8080 -p 443:443 -p 1000:1000 -p 2375:2375 -p 2376:2376 -p 2377:2377 -p 9010:9010 -p 9050:9443 -p 18080:8080 -p 18443:18443 -v /dev:/dev -v underground-nexus-docker-socket:/var/run -v underground-nexus-data:/var/lib/docker/volumes -v nexus-bucket:/nexus-bucket natoascode/underground-nexus:arm64`
+
+**Dockerhub *SECURE* pull for *Apple M1, Raspberry Pi, NVIDIA Jetson and arm64* systems:** `docker run -itd --name=Underground-Nexus -h Underground-Nexus --privileged --init -p 1000:1000 -p 9050:9443 -v /dev:/dev -v underground-nexus-docker-socket:/var/run -v underground-nexus-data:/var/lib/docker/volumes -v nexus-bucket:/nexus-bucket natoascode/underground-nexus:arm64`
 
 ----------------------------------------------------
 
 **IMPORTANT:** After deploying the Underground Nexus from the appropriate `docker run` command for your system, enter the command below for "**Install Step 2**" in the exact same terminal or console in which the `docker run` command ran. *This script does quite a lot and can take a LONG time to complete - depending on the power of your system and internet speeds it can take anywhere from 15 to 45 minutes to complete activating and initializing the Underground Nexus stack.*
 
-## Install Step 2 - Paste activation command in the same shell the first command was entered in, and the Underground Nexus will build and activate itself (2 commands total to deploy - this is the second and final command if there are no errors).  If the command does not seem to work try the alternative install option below.
+## Manual Install Step 2 - Paste activation command in the same shell the first command was entered in, and the Underground Nexus will build and activate itself (2 commands total to deploy - this is the second and final command if there are no errors).  If the command does not seem to work try the alternative install option below.
 
 ***ACTIVATE the Underground Nexus (this is the only necessary command to run IMMEDIATELY after deploying the Underground Nexus to activate it):***
 **`docker exec Underground-Nexus bash deploy-olympiad.sh`**
@@ -105,13 +111,13 @@ Learn why platform engineering matters to DevSecOps: https://youtu.be/ghzsBm8vOm
 
 **7.** The Athena0 Kali node happens to be a primary monitoring point for Grafana and Loki and also includes Radare2 (forensics tool used by NSA) for deep analysis that can be monitored with Grafana dashboards.
 
-**8.** Nexus can be turned into an ultra Pi hole if its DNS server ports are opened when Nexus is deployed (ports 53 and 67).  This would allow the Underground Nexus to be used as a company or home SOC that can have data integrated with Pi hole data using Grafana and Loki).
+**8.** Nexus can be turned into an ultra Pi hole if its DNS server ports are opened when Nexus is deployed (ports 53 and 67).  This would allow the Underground Nexus to be used as a company or home SOC that can have data integrated with Pi hole data using Grafana and Loki.
 
 **9.** Default URLs will show up if Nexus deploys without errors - **the links below can be used from inside the Nexus desktop if accessing this GitHub URL from inside the Firefox browser within the Nexus MATE desktop itself** (these will ONLY exist from inside a webtop web browser - Firefox works with these addresses from within the Nexus desktops):
 - Portainer: https://10.20.0.1:9443
 - Pi hole: http://inner-dns-control/admin/login.php (can change password from within Portainer)
 - Grafana: https://grafana.underground-ops.me/ and http://10.20.0.1:3000/ (default `user`:`password` is `admin`:`notiaPoint1`)
-- Wazuh: https://wazuh.underground-ops.me:5601/ and https://10.20.0.1:5601/ (default `user`:`password` is `admin`:`SecretPassword`)
+- Wazuh: https://wazuh.underground-ops.me:5601/ and https://10.20.0.1:5601/ (default `user`:`password` is `admin`:`admin`)
 - Cyber Life Torpedo (S3 bucket): http://10.20.0.1:9010 (default `user`:`password` is `minioadmin`:`minioadmin`)
 - Ubuntu MATE Admin Desktop: `http://10.20.0.1:1000` (runs as root - default `user`:`password` is `abc`:`abc` - don't access this host from inside the Underground Nexus MATE Desktop)
 - Ubuntu KDE Security Operation Center Desktop: http://10.20.0.1:2000 (least privilege - default `user`:`password` is `abc`:`abc`)
@@ -213,3 +219,7 @@ Grow your glory!
 **Ditch VPN's and go 100% Zero Trust:** https://www.youtube.com/watch?v=IYmXPF3XUwo
 
 **Publish a Zero Trust Wordpress Website directly from Underground Nexus with Cloudflare:** https://youtu.be/ey4u7OUAF3c
+
+----------------------------------------------------
+
+## Learn to master cloud skills with Underground Nexus. Check out Cloud Jam: https://cloudunderground.dev/products/cloud-jam
