@@ -43,7 +43,7 @@ RUN echo "docker run -d -p 8000:8000 -p 9443:9443 --name=Olympiad0 --dns=10.20.0
 
 #Deploy Athena0 Gateway and Security Operation Center
 RUN echo "docker run -itd --init --privileged -p 22:22 --name=Athena0 -h Athena0 --dns=10.20.0.20 --net=Inner-Athena --restart=always -v athena0:/home/ -v /nexus-bucket:/nexus-bucket -v /etc/docker:/etc/docker -v /usr/local/bin/docker:/usr/local/bin/docker -v /var/run/docker.sock:/var/run/docker.sock -v /var/lib/docker/volumes/:/var/lib/docker/volumes/ natoascode/athena0:latest" >> deploy-olympiad.sh
-RUN echo "docker run -itd --name=Security-Operation-Center -h Security-Operation-Center -e PUID=2000 -e PGID=2000 -e TZ=America/Colorado -p 2000:3000 --dns=10.20.0.20 --net=Inner-Athena --ip=10.20.0.30 --restart=always -v security-operation-center:/config -v /nexus-bucket:/config/Desktop/nexus-bucket linuxserver/webtop:alpine-kde" >> deploy-olympiad.sh
+RUN echo "docker run -itd --name=Security-Operation-Center -h Security-Operation-Center -e PUID=2000 -e PGID=2000 -e TZ=America/Colorado -p 2000:3000 --dns=10.20.0.20 --net=Inner-Athena --ip=10.20.0.30 --restart=always -v security-operation-center:/config -v /nexus-bucket:/config/Desktop/nexus-bucket linuxserver/webtop:ubuntu-i3 && docker exec Security-Operation-Center apt update && docker exec Security-Operation-Center apt install rofi -y && docker exec Security-Operation-Center apt install terminator -y && docker exec Security-Operation-Center apt install firefox -y && docker exec Security-Operation-Center su - abc -c 'DISPAY=:1 firefox &' && docker exec Security-Operation-Center su - abc -c 'DISPLAY=:1 terminator &'" >> deploy-olympiad.sh
 
 #Build workbench admin MATE desktop environment
 RUN echo "echo "FROM natoascode/workbench0:ubuntu" >> /nexus-bucket/workbench.dockerfile" >> deploy-olympiad.sh
@@ -177,6 +177,13 @@ RUN echo "wget https://raw.githubusercontent.com/Underground-Ops/underground-nex
 RUN echo "sh firefox-homepage.sh" >> deploy-olympiad.sh
 
 RUN echo "docker exec workbench bash /config/Desktop/nexus-bucket/terraform-workbench-install.sh && docker exec workbench terraform -v && docker exec workbench apt install terminator -y && docker exec workbench chown -R abc /config" >> deploy-olympiad.sh
+
+#Fix workbench apt (if broken) and set up rofi-based desktop menu
+RUN echo "docker exec workbench bash /config/Desktop/nexus-bucket/underground-nexus/'Dagger CI'/Scripts/Maintenance/workbench-apt-update-repair.sh" >> deploy-olympiad.sh
+RUN echo "docker exec workbench apt install rofi -y" >> deploy-olympiad.sh
+RUN echo "docker exec workbench bash /config/Desktop/nexus-bucket/underground-nexus/'Dagger CI'/Scripts/configure-desktop-menu.sh" >> deploy-olympiad.sh
+#Install Git-BIOS Control Panel
+RUN echo "docker exec workbench bash /config/Desktop/nexus-bucket/underground-nexus/Jelly-Apps/Git-BIOS-Control-Panel/install-git-bios-control-panel.sh || true" >> deploy-olympiad.sh
 
 RUN echo "docker exec Athena0 curl https://raw.githubusercontent.com/Underground-Ops/underground-nexus/main/underground-nexus-update.sh | bash" >> deploy-olympiad.sh
 
