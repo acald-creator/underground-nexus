@@ -1,114 +1,156 @@
 #!/usr/bin/env bash
-set -euo pipefail
+# =============================================================================
+# Git-BIOS Control Panel — start_control_panel.sh
+# Cloud Underground · Underground Nexus
+# =============================================================================
+#
+# Starts the Git-BIOS Control Panel server and opens a browser.
+# No venv, no pip, no Flask — server.py uses Python stdlib only.
+#
+# Usage:
+#   bash start_control_panel.sh
+#   PORT=8080 bash start_control_panel.sh
+# =============================================================================
 
-APP_DIR="/config/Desktop/nexus-bucket/underground-nexus/Jelly-Apps/Git-BIOS-Control-Panel"
-
-# Prefer a venv under /nexus-bucket; fall back to $HOME if not writable
-DEFAULT_VENV="/nexus-bucket/cp-venv"
-FALLBACK_VENV="$HOME/.gitbios-venv"
-VENV_DIR="${VENV_DIR:-$DEFAULT_VENV}"
-if ! mkdir -p "$VENV_DIR" 2>/dev/null; then
-  VENV_DIR="$FALLBACK_VENV"
-  mkdir -p "$VENV_DIR"
-fi
-
+APP_DIR="${APP_DIR:-/config/Desktop/nexus-bucket/underground-nexus/Jelly-Apps/Git-BIOS-Control-Panel}"
 PORT="${PORT:-5000}"
-HTML_SOURCE="${HTML_SOURCE:-$APP_DIR/gitbios-control-panel.html}"
-LOG="/config/Desktop/nexus-bucket/underground-nexus/Jelly-Apps/Git-BIOS-Control-Panel/control-panel.log"
+LOG="${APP_DIR}/control-panel.log"
 URL="http://localhost:${PORT}"
-
-healthcheck () {
-python3 - "$@" <<'PY'
-import sys, urllib.request, urllib.error, time, os
-url=os.environ.get('URL')
-for _ in range(50):
-    try:
-        with urllib.request.urlopen(url+'/healthz', timeout=1) as r:
-            if r.status==200: sys.exit(0)
-    except Exception:
-        time.sleep(0.2)
-sys.exit(1)
-PY
-}
-
-open_url () {
-  for B in \
-    "${BROWSER:-}" \
-    /usr/bin/firefox /snap/bin/firefox \
-    /usr/bin/chromium /usr/bin/chromium-browser \
-    /usr/bin/google-chrome /usr/bin/google-chrome-stable \
-    /usr/bin/sensible-browser \
-    /usr/bin/gio /usr/bin/xdg-open
-  do
-    [ -n "$B" ] || continue
-    if [ "$B" = "/usr/bin/gio" ]; then
-      nohup gio open "$URL" >/dev/null 2>&1 && return 0
-    elif [ -x "$B" ]; then
-      nohup "$B" "$URL" >/dev/null 2>&1 && return 0
-    fi
-  done
-  echo "Could not find a browser to open $URL" >> "$LOG"
-  return 1
-}
-
-# -------------------------
-# Robust interpreter select
-# -------------------------
 PYBIN="python3"
-USE_VENV=0
 
-# Check if venv module is available at all (python3-venv might be missing)
-if "$PYBIN" -Im venv -h >/dev/null 2>&1; then
-  if [ ! -x "$VENV_DIR/bin/python3" ]; then
-    # Try to create the venv; if ensurepip explodes, we catch it and continue without venv
-    if "$PYBIN" -Im venv "$VENV_DIR" >/dev/null 2>&1; then
-      USE_VENV=1
-      # Try to ensure pip inside the venv (ignore failure; we'll fall back later)
-      "$VENV_DIR/bin/python3" -Im ensurepip --upgrade >/dev/null 2>&1 || true
+# ─────────────────────────────────────────────────────────────────────────────
+# DISPLAY ENVIRONMENT
+# When launched from a .desktop icon with Terminal=false, DISPLAY may not be
+# set. Read it from the running session's /proc environ before opening browser.
+# ─────────────────────────────────────────────────────────────────────────────
+_setup_display() {
+    [ -n "${DISPLAY:-}" ] || [ -n "${WAYLAND_DISPLAY:-}" ] && return 0
+
+    for ENV_FILE in \
+        "/proc/$(pgrep -u abc   -x i3   2>/dev/null | head -1)/environ" \
+        "/proc/$(pgrep -u abc   -x mate 2>/dev/null | head -1)/environ" \
+        "/proc/$(pgrep -u 1000  -x i3   2>/dev/null | head -1)/environ" \
+        "/proc/$(pgrep -u 1000  -x kasm 2>/dev/null | head -1)/environ" \
+        "/tmp/.display-env" \
+        "/config/.display-env"
+    do
+        [ -f "${ENV_FILE}" ] || continue
+        DISP=$(tr '\0' '\n' < "${ENV_FILE}" 2>/dev/null | grep '^DISPLAY='               | cut -d= -f2  | head -1)
+        WAYL=$(tr '\0' '\n' < "${ENV_FILE}" 2>/dev/null | grep '^WAYLAND_DISPLAY='       | cut -d= -f2  | head -1)
+        DBUS=$(tr '\0' '\n' < "${ENV_FILE}" 2>/dev/null | grep '^DBUS_SESSION_BUS_ADDRESS=' | cut -d= -f2- | head -1)
+        XAUT=$(tr '\0' '\n' < "${ENV_FILE}" 2>/dev/null | grep '^XAUTHORITY='            | cut -d= -f2  | head -1)
+        [ -n "${DISP}" ] && export DISPLAY="${DISP}"
+        [ -n "${WAYL}" ] && export WAYLAND_DISPLAY="${WAYL}"
+        [ -n "${DBUS}" ] && export DBUS_SESSION_BUS_ADDRESS="${DBUS}"
+        [ -n "${XAUT}" ] && export XAUTHORITY="${XAUT}"
+        break
+    done
+
+    # Hard fallback — KasmVNC in linuxserver webtop always uses :1
+    if [ -z "${DISPLAY:-}" ] && [ -z "${WAYLAND_DISPLAY:-}" ]; then
+        export DISPLAY=":1"
     fi
-  else
-    USE_VENV=1
-  fi
-fi
+}
 
-if [ "$USE_VENV" -eq 1 ]; then
-  PYBIN="$VENV_DIR/bin/python3"
-  # If Flask missing in venv, try to install (only if pip exists)
-  if ! "$PYBIN" -c "import flask" 2>/dev/null; then
-    if [ -x "$VENV_DIR/bin/pip" ]; then
-      TMPDIR=/var/tmp PIP_NO_CACHE_DIR=1 "$VENV_DIR/bin/pip" install "Flask==3.0.2" || true
+# ─────────────────────────────────────────────────────────────────────────────
+# HEALTHCHECK — curl is 5ms vs spawning python3 which takes 200ms+
+# ─────────────────────────────────────────────────────────────────────────────
+_is_server_running() {
+    curl -sf --max-time 1 "${URL}/healthz" >/dev/null 2>&1
+}
+
+_wait_for_server() {
+    local i=0
+    while [ "${i}" -lt 30 ]; do
+        _is_server_running && return 0
+        sleep 0.2
+        i=$((i + 1))
+    done
+    return 1
+}
+
+# ─────────────────────────────────────────────────────────────────────────────
+# BROWSER LAUNCH
+# Each browser attempt is its own if-block so there is no &; syntax.
+# Firefox first (installed in workbench0), then chromium, then fallbacks.
+# xdg-open is tried first because it uses the session's MIME handler which
+# works correctly when DISPLAY is set — it routes to whatever the user's
+# default browser is without needing to know the binary path.
+# ─────────────────────────────────────────────────────────────────────────────
+_open_browser() {
+    # xdg-open: session-aware, always correct when DISPLAY is set
+    if command -v xdg-open >/dev/null 2>&1; then
+        xdg-open "${URL}" >/dev/null 2>&1 &
+        return 0
     fi
-    # If still no Flask, abandon venv and use system Python
-    "$PYBIN" -c "import flask" 2>/dev/null || USE_VENV=0
-  fi
+    # Firefox — primary browser in workbench0
+    if [ -x /usr/bin/firefox ]; then
+        /usr/bin/firefox "${URL}" >/dev/null 2>&1 &
+        return 0
+    fi
+    if [ -x /snap/bin/firefox ]; then
+        /snap/bin/firefox "${URL}" >/dev/null 2>&1 &
+        return 0
+    fi
+    # Chromium — installed in workbench0 as secondary browser
+    if [ -x /usr/bin/chromium ]; then
+        /usr/bin/chromium "${URL}" >/dev/null 2>&1 &
+        return 0
+    fi
+    if [ -x /usr/bin/chromium-browser ]; then
+        /usr/bin/chromium-browser "${URL}" >/dev/null 2>&1 &
+        return 0
+    fi
+    if [ -x /usr/bin/google-chrome ]; then
+        /usr/bin/google-chrome "${URL}" >/dev/null 2>&1 &
+        return 0
+    fi
+    if [ -x /usr/bin/google-chrome-stable ]; then
+        /usr/bin/google-chrome-stable "${URL}" >/dev/null 2>&1 &
+        return 0
+    fi
+    # gio open — gvfs session handler, last resort
+    if command -v gio >/dev/null 2>&1; then
+        gio open "${URL}" >/dev/null 2>&1 &
+        return 0
+    fi
+    echo "[gitbios] No browser found. Open manually: ${URL}" | tee -a "${LOG}"
+    return 1
+}
+
+# ─────────────────────────────────────────────────────────────────────────────
+# MAIN
+# ─────────────────────────────────────────────────────────────────────────────
+mkdir -p "${APP_DIR}"
+
+# Step 1: Export display environment before any browser call
+_setup_display
+
+# Step 2: Verify server.py is present
+if [ ! -f "${APP_DIR}/server.py" ]; then
+    echo "[gitbios] ERROR: server.py not found at ${APP_DIR}/server.py" >&2
+    echo "[gitbios] Run the installer first:" >&2
+    echo "[gitbios]   bash ${APP_DIR}/install-git-bios-control-panel.sh" >&2
+    exit 1
 fi
 
-if [ "$USE_VENV" -eq 0 ]; then
-  PYBIN="python3"
-  # If Flask missing on the system interpreter, install to user site (no sudo)
-  if ! "$PYBIN" -c "import flask" 2>/dev/null; then
-    # Try best-effort user install; ignore failures so we can still show logs
-    "$PYBIN" -m pip install --user --break-system-packages --no-cache-dir "Flask==3.0.2" || true
-  fi
+# Step 3: Start server if not already running
+if ! _is_server_running; then
+    echo "[gitbios] Starting server on port ${PORT}..." | tee -a "${LOG}"
+    cd "${APP_DIR}"
+    PORT="${PORT}" nohup "${PYBIN}" server.py >> "${LOG}" 2>&1 &
+    echo "[gitbios] Server PID: $!" | tee -a "${LOG}"
+
+    if ! _wait_for_server; then
+        echo "[gitbios] Server failed to start within 6s. Last log:" >&2
+        tail -20 "${LOG}" >&2
+        exit 1
+    fi
+    echo "[gitbios] Server ready." | tee -a "${LOG}"
+else
+    echo "[gitbios] Server already running at ${URL}"
 fi
 
-# Final check â�� bail with a helpful message if Flask is still missing
-if ! "$PYBIN" -c "import flask" 2>/dev/null; then
-  echo "ERROR: Flask is not available in venv ($VENV_DIR) or system Python." >&2
-  echo "Workarounds:" >&2
-  echo "  1) Try: sudo apt-get update && sudo apt-get install -y python3-venv" >&2
-  echo "  2) Or run once: python3 -m pip install --user --break-system-packages Flask==3.0.2" >&2
-  exit 1
-fi
-
-# -------------------------
-# Start the server if needed
-# -------------------------
-export URL
-if ! healthcheck; then
-  cd "$APP_DIR"
-  (PORT="$PORT" HTML_SOURCE="$HTML_SOURCE" nohup "$PYBIN" server.py >> "$LOG" 2>&1 &) >/dev/null
-  healthcheck || echo "Started; health check not ready yet." >> "$LOG" || true
-fi
-
-open_url || true
+# Step 4: Open browser
+_open_browser
+echo "[gitbios] Control panel: ${URL}"
